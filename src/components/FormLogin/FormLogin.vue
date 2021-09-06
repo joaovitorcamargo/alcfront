@@ -18,13 +18,17 @@
           v-model="password"
         ></b-form-input>
       </b-form-group>
-      <b-button
-        class="mt-3 button-form btn-block"
-        @click.prevent="login()"
-        variant="primary"
-      >
-        Login
-      </b-button>
+      <div class="d-flex align-items-center">
+        <b-button
+          class="mt-3 button-form btn-block"
+          @click.prevent="login()"
+          variant="primary"
+          :class="{ disabled: !isDisabled }"
+        >
+          Login
+        </b-button>
+        <b-spinner class="mx-2" :class="{ 'd-none': isDisabled }"></b-spinner>
+      </div>
     </b-form>
   </div>
 </template>
@@ -35,10 +39,12 @@ export default {
     return {
       email: "",
       password: "",
+      isDisabled: true,
     };
   },
   methods: {
     login() {
+      this.isDisabled = false;
       this.$store
         .dispatch("logarUsuario", {
           email: this.email,

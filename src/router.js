@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Login from '@/views/Login.vue'
 import Sistema from '@/views/Sistema.vue'
+import EditFormUser from '@/components/Users/EditFormUser.vue'
 
 Vue.use(Router);
 
@@ -24,6 +25,12 @@ const router = new Router({
       meta:{
         login:true
       }
+    },
+    {
+      path:'/sistema/edituser/:id',
+      name: "EditFormUse",
+      props: true,
+      component: EditFormUser
     }
   ]
 });

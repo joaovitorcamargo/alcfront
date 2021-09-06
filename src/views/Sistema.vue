@@ -33,43 +33,10 @@
         Cancelar Registro Tarefa
       </button>
     </div>
-    <component :is="currentComponent"></component>
+    <component :is="currentComponent" @refreshList="getUsers()"></component>
     <hr />
     <div>
-      <b-card no-body>
-        <b-tabs pills card>
-          <b-tab
-            active
-            title="Lista de usuários"
-            v-if="$store.state.usuario.type == 1"
-          >
-            <div>
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th scope="col">Nome</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="user in users" :key="user.id">
-                    <td>{{ user.name }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>
-                      <button class="btn btn-success">Editar</button>
-                      <button class="btn btn-danger">Remover</button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </b-tab>
-          <b-tab title="Lista de Tarefas">
-            <b-card-text>Tab contents 2</b-card-text>
-          </b-tab>
-        </b-tabs>
-      </b-card>
+      <list-users :users="users" @refreshList="getUsers()"> </list-users>
     </div>
   </div>
 </template>
@@ -77,12 +44,14 @@
 <script>
 import FormRegister from "../components/FormLogin/FormRegister.vue";
 import FormTask from "../components/FormTask/FormTask.vue";
+import ListUsers from "../components/Users/ListUsers.vue";
 import { api } from "../services.js";
 
 export default {
   components: {
     FormRegister,
     FormTask,
+    ListUsers,
   },
   data() {
     return {
@@ -96,9 +65,10 @@ export default {
         .get("/api/getUsers")
         .then(({ data }) => {
           this.users = data.users;
-          console.log(this.users);
         })
-        .catch(() => {});
+        .catch((error) => {
+          console.trace(error);
+        });
     },
   },
   mounted() {
