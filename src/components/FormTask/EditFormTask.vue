@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <h1>Registrar Tarefa</h1>
     <b-form>
       <b-form-group class="mt-3" label="Insira o nome da task">
@@ -29,11 +29,11 @@
       <div class="d-flex">
         <b-button
           class="mt-3"
-          @click.prevent="registerTask"
+          @click.prevent="editTask"
           variant="primary"
           :class="{ disabled: !isDisabled }"
         >
-          Registrar Tarefa
+          Editar Tarefa
         </b-button>
         <b-spinner class="mx-2" :class="{ 'd-none': isDisabled }"></b-spinner>
       </div>
@@ -43,8 +43,9 @@
 
 <script>
 import { api } from "../../services.js";
-
 export default {
+  name: "EditFormTask",
+  props: ["id"],
   data() {
     return {
       name: "",
@@ -54,10 +55,20 @@ export default {
     };
   },
   methods: {
-    registerTask() {
-      this.isDisabled = false;
+    getTaskById() {
       api
-        .post("api/registerTask", {
+        .get(`/api/getTaskById/${this.id}`)
+        .then(({ data }) => {
+          this.name = data.task.name;
+          this.done_date = data.task.done_date;
+          this.status = data.task.status;
+        })
+        .catch();
+    },
+    editTask() {
+      api
+        .put("api/editTask", {
+          id: this.id,
           name: this.name,
           done_date: this.done_date,
           status: this.status,
@@ -68,21 +79,17 @@ export default {
             position: "bottom-center",
             duration: 1500,
           });
-          this.name = "";
-          this.done_date = "";
-          this.status = "";
-          this.$emit("refreshListTask");
+          this.getTaskById();
         })
-        .catch((error) => {
-          console.log(error);
-        })
-        .finally(() => {
-          this.isDisabled = true;
-        });
+        .catch(() => {})
+        .finally(() => {});
     },
+  },
+  mounted() {
+    this.getTaskById();
   },
 };
 </script>
 
-<style lang="">
+<style>
 </style>

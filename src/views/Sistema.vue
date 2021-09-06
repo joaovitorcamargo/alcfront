@@ -33,10 +33,20 @@
         Cancelar Registro Tarefa
       </button>
     </div>
-    <component :is="currentComponent" @refreshList="getUsers()"></component>
+    <component
+      :is="currentComponent"
+      @refreshList="getUsers()"
+      @refreshListTask="getTasks()"
+    ></component>
     <hr />
     <div>
-      <list-users :users="users" @refreshList="getUsers()"> </list-users>
+      <list-users
+        :users="users"
+        :tasks="tasks"
+        @refreshList="getUsers()"
+        @refreshListTask="getTasks()"
+      >
+      </list-users>
     </div>
   </div>
 </template>
@@ -57,6 +67,7 @@ export default {
     return {
       currentComponent: "",
       users: [],
+      tasks: [],
     };
   },
   methods: {
@@ -70,9 +81,20 @@ export default {
           console.trace(error);
         });
     },
+    getTasks() {
+      api
+        .get("/api/getTasks")
+        .then(({ data }) => {
+          this.tasks = data.tasks;
+        })
+        .catch((error) => {
+          console.trace(error);
+        });
+    },
   },
   mounted() {
     this.getUsers();
+    this.getTasks();
   },
 };
 </script>
